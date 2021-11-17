@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: {{ matrix.python_ver }}
+          python-version: ${{ matrix.python_ver }}
 
       - name: Install Python dependencies
         run: python -m pip install --upgrade pip pytest-workflow
@@ -36,7 +36,7 @@ jobs:
           auto-update-conda: true
           channels: conda-forge,bioconda,defaults
           mamba-version: "*"
-          python-version: {{ matrix.python_ver }}
+          python-version: ${{ matrix.python_ver }}
 
       - name: Install Nextflow
         env:
