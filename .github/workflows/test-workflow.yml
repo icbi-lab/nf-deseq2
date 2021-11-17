@@ -1,0 +1,65 @@
+name: Workflow CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run workflow tests
+    runs-on: ubuntu-latest
+    env:
+      NXF_ANSI_LOG: false
+    strategy:
+      matrix:
+        # Nextflow versions: check pipeline minimum and latest edge version
+        nxf_ver: ["NXF_VER=21.04.0", "NXF_EDGE=1"]
+        python_ver: ["3.8"]
+        tag: ["main"]
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: {{ matrix.python_ver }}
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip pytest-workflow
+
+      - name: Setup miniconda
+        # if: matrix.profile == 'conda'
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          channels: conda-forge,bioconda,defaults
+          mamba-version: "*"
+          python-version: {{ matrix.python_ver }}
+
+      - name: Install Nextflow
+        env:
+          CAPSULE_LOG: none
+        run: |
+          wget -qO- get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+          export ${{ matrix.nxf_ver }}
+          nextflow self-update
+
+      - name: Run pytest-workflow
+        # only use one thread for pytest-workflow to avoid race condition on conda cache.
+        run: TMPDIR=~ pytest --tag ${{ matrix.tag }} --symlink --kwdof
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs-${{ matrix.tag }}-${{ matrix.nxf_version }}
+          path: |
+            /home/runner/pytest_workflow_*/*/.nextflow.log
+            /home/runner/pytest_workflow_*/*/log.out
+            /home/runner/pytest_workflow_*/*/log.err
+            /home/runner/pytest_workflow_*/*/work
