@@ -16,7 +16,7 @@ jobs:
         # Nextflow versions: check pipeline minimum and latest edge version
         nxf_ver: ["NXF_VER=21.04.0", "NXF_EDGE=1"]
         python_ver: ["3.8"]
-        tag: ["main"]
+        tag: ["deseq2"]
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
