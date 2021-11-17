@@ -1,0 +1,7 @@
+- name: deseq2
+  command: nextflow run main.nf -c tests/test.config
+  tags:
+    - deseq2
+  files:
+    - path: "results/hello/hello.txt"
+      contains: ["Hello world"]
