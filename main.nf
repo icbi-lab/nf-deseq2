@@ -5,5 +5,11 @@ nextflow.enable.dsl = 2
 include { HELLO } from "./modules/hello"
 
 workflow {
-    HELLO("world")
+    assert params.gene_expression != null : "Please specify the `gene_expression` parameter"
+    assert params.samplesheet != null : "Please specify the `samplesheet` parameter"
+    gene_expression = file(params.gene_expression, checkIfExists: true)
+    samplesheet = file(params.samplesheet, checkIfExists: true)
+    genes_of_interest = params.genes_of_interest ? file(params.genes_of_interest, checkIfExists: true) : []
+
+    HELLO(samplesheet, gene_expression, genes_of_interest)
 }
