@@ -3,5 +3,5 @@
   tags:
     - deseq2
   files:
-    - path: "results/hello/hello.txt"
-      contains: ["Hello world"]
+    - path: "results/dummy_check_input/test.txt"
+      contains: ["gene_expression.subset.tsv", "samplesheet.csv", "CAMSAP1"]
