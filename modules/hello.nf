@@ -1,15 +1,13 @@
 
 process HELLO {
 
-    // conda "conda-forge::python=3.8"
-
     input:
     path samplesheet
     path gene_expression
     path genes_of_interest
 
     output:
-    path("*.txt"), emit: hello
+    path("test.txt"), emit: hello
 
     script:
     """
