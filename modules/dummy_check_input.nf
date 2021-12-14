@@ -1,5 +1,5 @@
 
-process HELLO {
+process dummyCheckInput {
 
     input:
     path samplesheet
@@ -7,7 +7,7 @@ process HELLO {
     path genes_of_interest
 
     output:
-    path("test.txt"), emit: hello
+    path("test.txt"), emit: test
 
     script:
     """
