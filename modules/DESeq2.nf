@@ -17,20 +17,29 @@ out_dir = file(params.resDir)
 mode = params.publish_dir_mode
 
 process DESeq2 {
-
-	conda "conda-forge::python=3.8"
+    //Packages dependencies
+        conda "conda-forge::python=3.8"
+        conda "bioconda::bioconductor-biocparallel=1.28.0"
+        conda "bioconda::bioconductor-deseq2=1.34.0"
+        conda "bioconda::bioconductor-org.hs.eg.db=3.14.0"
+        conda "conda-forge::r-dplyr=1.0.7"
+        conda "bioconda::bioconductor-ihw=1.22.0"
+        conda "conda-forge::r-tibble=3.1.6"
+        conda "conda-forge::r-readr=2.1.1"
+        conda "conda-forge::r-argparser=0.7.1"
     publishDir "${out_dir}", mode: "$mode"
-	input:
-        path p1
-	    path p2
+
+        input:
+        path count_matrix_path
+	    path sample_ann_path
 
     output:
         file("*.tsv")
-        path 'DESeq2_result.txt'
+        path 'DESeq2_result_summary.txt'
 
 	script:
 	"""
-    Rscript $projectDir/DESeq2_script.R $p1 $p2 --wdir `echo \$PWD` > DESeq2_result.txt
+    DESeq2_script.R $count_matrix_path $sample_ann_path --cpus $task.cpus > DESeq2_result_summary.txt
 	"""
 }
 

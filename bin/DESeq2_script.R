@@ -22,12 +22,12 @@ p <- add_argument(p, "--resDir", help="Output result directory", default="./resu
 p <- add_argument(p, "--cond_col", help="Column in sample annotation that contains the condition", default="group")
 p <- add_argument(p, "--paired_grp", help="Column containing the name of the paired samples, when dealing with paired data", default="donor")
 p <- add_argument(p, "--prefix", help="Prefix of result file", default="test")
-p <- add_argument(p, "--sample_col", help="Column in sample annotation that contains the sample names", default=NULL)
+p <- add_argument(p, "--sample_col", help="Column in sample annotation that contains the sample names", default="sample")
 p <- add_argument(p, "--id_type", help="Type of the identifier in the `gene_id` column compatible with AnnotationDbi", default="ENSEMBL")
 p <- add_argument(p, "--fdr", help="False discovery rate for GO analysis and volcano plots", default=0.1)
-p <- add_argument(p, "--wdir", help="current working dir", default='./results')
 p <- add_argument(p, "--c1", help="Contrast level 1 (perturbation)", default="grpA")
 p <- add_argument(p, "--c2", help="Contrast level 2 (baseline)", default="grpB")
+p <- add_argument(p, "--cpus", help="Number of cpus", default=8)
 
 # Parse the command line arguments
 argv <- parse_args(p)
@@ -46,10 +46,10 @@ cond_col <- argv$cond_col
 sample_col <- argv$sample_col
 gene_id_type <- argv$id_type
 fdr_cutoff <- argv$fdr
-wdir <- argv$wdir
 c1 <- argv$c1
 c2 <- argv$c2
 contrast <- c(cond_col, c1, c2)
+n_cpus <- argv$cpus
 
 # Reading the Annotation sample csv file
 sampleAnno <- read_csv(argv$colData) |> filter(get(cond_col) %in% contrast[2:3])
@@ -57,7 +57,6 @@ sampleAnno <- read_csv(argv$colData) |> filter(get(cond_col) %in% contrast[2:3])
 # Add sample_col based on condition and replicate if sample col is not explicitly specified
 # and make sampleAnno distinct
 
-sample_col <- "sample"
 sampleAnno <- sampleAnno |>
   dplyr::select(-fastq_1, -fastq_2) |>
   distinct()
@@ -91,23 +90,19 @@ keep <- rowSums(counts(collapseReplicates(dds, dds[[cond_col]]))) >= 10
 dds <- dds[keep,]
 
 # save filtered count file
-write_tsv(counts(dds) |> as_tibble(rownames = "gene_id"), file.path(wdir, paste0(prefix, "_detectedGenesRawCounts_min_10_reads_in_one_condition.tsv")))
+write_tsv(counts(dds) |> as_tibble(rownames = "gene_id"), file.path("./", paste0(prefix, "_detectedGenesRawCounts_min_10_reads_in_one_condition.tsv")))
 
 # save normalized filtered count file
 dds <- estimateSizeFactors(dds)
-write_tsv(counts(dds, normalized=TRUE) |> as_tibble(rownames = "gene_id"), file.path(wdir, paste0(prefix, "_detectedGenesNormalizedCounts_min_10_reads_in_one_condition.tsv")))
+write_tsv(counts(dds, normalized=TRUE) |> as_tibble(rownames = "gene_id"), file.path("./", paste0(prefix, "_detectedGenesNormalizedCounts_min_10_reads_in_one_condition.tsv")))
 
 # Set the reference to the contrast level 2 (baseline) given by the --c2 option
 dds[[cond_col]] <- relevel( dds[[cond_col]], contrast[[3]])
 
 # run DESeq
-n_cpus <- 8
 register(MulticoreParam(workers = n_cpus))
 
 dds <- DESeq(dds, parallel = (n_cpus > 1))
-
-# get normalized counts
-nc <- counts(dds, normalized=T)
 
 ### IHW
 # use of IHW for p value adjustment of DESeq2 results
@@ -118,7 +113,13 @@ resIHW <- results(dds, filterFun=ihw, contrast=contrast) |>
   left_join(ensg_to_desc, by = c("gene_id" = gene_id_type) ) |>
   dplyr::rename(genes_description = GENENAME) |>
   arrange(pvalue)
+
+write_tsv(resIHW |> as_tibble(rownames = "gene_id"), file.path("./", paste0(prefix, "_DESeq2_result.tsv")))
 summary(resIHW)
-sum(resIHW$padj < fdr_cutoff, na.rm=TRUE)
+ngenes_cut <- sum(resIHW$padj < fdr_cutoff, na.rm=TRUE)
+print(paste0("Number of genes under the specified cutoff: ",ngenes_cut))
+
+
+
 
 
