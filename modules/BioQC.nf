@@ -1,5 +1,7 @@
 #!/usr/bin/env nextflow
 
+nextflow.enable.dsl=2
+
 /*
 BioQC is a is a R/Bioconductor package to detect tissue heterogeneity in gene expression data
 */
