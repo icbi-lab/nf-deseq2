@@ -30,8 +30,8 @@ bioqcRes = wmwTest(tpm_mat_2, gmt)
 bioqcResFil <- filterPmat(bioqcRes, 1E-6)
 bioqcAbsLogRes <- absLog10p(bioqcResFil)
 
-jpeg(file="Bioqc_heatmap.jpg")
+jpeg(file="Bioqc_heatmap.jpg", width=1000, height=500)
 heatmap(bioqcAbsLogRes, Colv=NA, Rowv=TRUE,
-        cexRow=0.85, scale="row",
+        cexRow=1, scale="row",
         labCol=1:ncol(bioqcAbsLogRes))
 dev.off()
