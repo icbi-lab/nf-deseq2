@@ -1,5 +1,4 @@
 
-
 process dummyCheckInput {
 
     input:
