@@ -3,6 +3,7 @@
 nextflow.enable.dsl = 2
 
 include { dummyCheckInput } from "./modules/dummy_check_input"
+include { DESeq2 } from "./modules/DESeq2"
 
 workflow {
     assert params.gene_expression != null : "Please specify the `gene_expression` parameter"
@@ -12,4 +13,5 @@ workflow {
     genes_of_interest = params.genes_of_interest ? file(params.genes_of_interest, checkIfExists: true) : []
 
     dummyCheckInput(samplesheet, gene_expression, genes_of_interest)
+    DESeq2(gene_expression,samplesheet)
 }
