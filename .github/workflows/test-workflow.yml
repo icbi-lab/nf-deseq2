@@ -51,6 +51,16 @@ jobs:
         # only use one thread for pytest-workflow to avoid race condition on conda cache.
         run: TMPDIR=~ pytest --tag ${{ matrix.tag }} --symlink --kwdof
 
+      - name: Output log on failure
+        if: failure()
+        run: |
+          echo "======> log.out <======="
+          cat /home/runner/pytest_workflow_*/*/log.out
+          echo
+          echo
+          echo "======> log.err <======="
+          cat /home/runner/pytest_workflow_*/*/log.err
+
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v2
