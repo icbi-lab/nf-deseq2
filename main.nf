@@ -4,6 +4,7 @@ nextflow.enable.dsl = 2
 
 include { dummyCheckInput } from "./modules/dummy_check_input"
 include { DESeq2 } from "./modules/DESeq2"
+include { VolcanoPlot } from "./modules/VolcanoPlot"
 
 workflow {
     assert params.gene_expression != null : "Please specify the `gene_expression` parameter"
@@ -14,4 +15,5 @@ workflow {
 
     dummyCheckInput(samplesheet, gene_expression, genes_of_interest)
     DESeq2(gene_expression,samplesheet)
+    VolcanoPlot(IHW_Res,genes_of_interest)
 }
