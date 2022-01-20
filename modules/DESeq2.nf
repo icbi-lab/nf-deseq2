@@ -4,7 +4,7 @@ def s = """\
         _________________________________________________
         Nextflow DESeq2:
 
-        ▶ Inpu count data matrix: ${params.gene_expression}
+        ▶ Input count data matrix: ${params.gene_expression}
         ▶ Input sample annotation data: ${params.samplesheet}
         ▶ result output directory: ${params.resDir}
         _________________________________________________
