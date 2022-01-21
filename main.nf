@@ -19,7 +19,7 @@ workflow {
 
     // start workflow
     dummyCheckInput(samplesheet, gene_expression, genes_of_interest)
-    DESeq2(gene_expression,samplesheet)
+    DESeq2(gene_expression, samplesheet, prefix)
 
     if (!params.skip_ora) {
         CLUSTERPROFILER_ORA(DESeq2.out.de_res, ch_ora_pathway_dbs, prefix, de_fdr_cutoff)
