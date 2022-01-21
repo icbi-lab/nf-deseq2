@@ -1,35 +1,34 @@
 #!/usr/bin/env Rscript
 '
 Usage:
-./clusterprofiler_ora.R --de_res=<de_res> --pathways=<pathways> --prefix=<prefix> [options]
+  clusterprofiler_ora.R --de_res=<de_res> --pathways=<pathways> --prefix=<prefix> [options]
 
 Mandatory arguments:
---de_res            TopTable from DESeq2 in TSV format
---pathways          Pathway database to test against. One of "KEGG", "Reactome", "WikiPathway", "GO_BP", "GO_MF"
---prefix            Prefix for output filenames
+  --de_res=<de_res>            TopTable from DESeq2 in TSV format
+  --pathways=<pathways>        Pathway database to test against. One of "KEGG", "Reactome", "WikiPathway", "GO_BP", "GO_MF"
+  --prefix=<prefix>            Prefix for output filenames
 
 Optional arguments:
---de_fdr_cutoff        Consider genes with an fdr smaller than this value as the positive group of the ORA test [default: 0.1]
---pathway_p_cutoff     Make plot if there is a least one pathway enriched with a p value smaller than this [default: 0.05]
+  --de_fdr_cutoff=<fdr>        Consider genes with an fdr smaller than this value as the positive group of the ORA test [default: 0.1]
+  --pathway_p_cutoff=<p>       Make plot if there is a least one pathway enriched with a p value smaller than this [default: 0.05]
+  --results_dir=<dir>          Output directory [default: ./]
 ' -> doc
 
 library(conflicted)
 library(docopt)
+arguments <- docopt(doc, version = "0.1")
+print(arguments)
+
 library(clusterProfiler)
 library(org.Hs.eg.db)
 library(dplyr)
 library(ggplot2)
+library(ReactomePA)
+library(readr)
 conflict_prefer("select", "dplyr")
 conflict_prefer("filter", "dplyr")
 
 
-
-#' mapping of HGNC symbols to ENTREZ identifiers
-hgnc_to_entrez <- AnnotationDbi::select(
-  org.Hs.eg.db, resIHW |> pull("gene_name") |> unique(),
-  keytype = "SYMBOL",
-  columns = c("ENTREZID")
-)
 
 #' Function definitions for the different databases
 ora_tests <- list(
@@ -100,21 +99,25 @@ get_heatplot_dims <- function(p) {
 
 
 # Retrieve and validate Parameters
-arguments <- docopt(doc, version = "0.1")
-print(arguments)
 de_res <- read_tsv(arguments$de_res)
 pathways <- arguments$pathways
 de_fdr_cutoff <- arguments$de_fdr_cutoff
 pathway_p_cutoff <- arguments$pathway_p_cutoff
 prefix <- arguments$prefix
+results_dir <- arguments$results_dir
 stopifnot(pathways %in% names(ora_tests))
 
 # full list with ENTREZIDs added
+hgnc_to_entrez <- AnnotationDbi::select(
+  org.Hs.eg.db, unique(de_res$gene_name),
+  keytype = "SYMBOL",
+  columns = c("ENTREZID")
+)
 de_res_entrez <- de_res |> inner_join(hgnc_to_entrez, by = c("gene_name" = "SYMBOL"))
 universe <- unique(de_res_entrez$ENTREZID)
 
 # list of significant genes for ORA test
-de_res_sig <- de_res_entrez |> filter(FDR < de_fdr_cutoff)
+de_res_sig <- de_res_entrez |> filter(padj < de_fdr_cutoff)
 de_foldchanges <- de_res_sig$log2FoldChange
 names(de_foldchanges) <- de_res_sig$ENTREZID
 
