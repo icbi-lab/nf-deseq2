@@ -11,17 +11,19 @@ library (dplyr)
 
 # load input files, e.g. test data
 
-sampleAnnotation <- read_csv("https://raw.githubusercontent.com/icbi-lab/nf-deseq2/main/tests/testdata/example_nfcore/rnaseq_samplesheet_nfcore-3.1.csv")
-geneCounts <- read_tsv("https://raw.githubusercontent.com/icbi-lab/nf-deseq2/main/tests/testdata/example_nfcore/salmon.merged.gene_counts.subset.tsv")
+sampleAnnotation <- read_csv("https://raw.githubusercontent.com/icbi-lab/nf-deseq2/main/tests/testdata/example_nfcore/rnaseq_samplesheet_nfcore-3.1.csv", show_col_types = FALSE)
+geneCounts <- read_tsv("https://raw.githubusercontent.com/icbi-lab/nf-deseq2/main/tests/testdata/example_nfcore/salmon.merged.gene_counts.subset.tsv", show_col_types = F)
 
-### notes: 
-### check gene counts for column names with samples
-### take it and filter samplesheets based on that - i.e. output samplesheet will have only 6 lines in total, only those, that are different
+sampleAnnotation2 <- sampleAnnotation %>%
+  select(-fastq_1, -fastq_2) %>%
+  distinct()      # filter distinct rows
 
-cond_col = "group"
-# sample_col = NULL
-contrast = c("group", "grpA", "grpB")
+# another approach
+geneCounts2 <- select(geneCounts, -gene_id, -gene_name) %>%
+  colnames()
+outputSheet <- filter(sampleAnnotation, sample==geneCounts2) # this preserves two more columns
 
-sampleAnnotation2 <- filter(sampleAnnotation, get(cond_col) %in% contrast[2:3])
 
-#### end end end
+#output cleaned samplesheet
+print(sampleAnnotation2)
+print(outputSheet)
