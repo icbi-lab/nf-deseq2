@@ -24,8 +24,8 @@ process DESeq2 {
 	    path sample_ann_path
 
     output:
-        file("*.tsv")
-        path 'DESeq2_result_summary.txt'
+        file("*.tsv"), emit: de_res
+        path 'DESeq2_result_summary.txt', emit: summary
 
 	script:
 	"""
