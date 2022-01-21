@@ -24,6 +24,6 @@ geneCounts2 <- select(geneCounts, -gene_id, -gene_name) %>%
 outputSheet <- filter(sampleAnnotation, sample==geneCounts2) # this preserves two more columns
 
 
-#output cleaned samplesheet
+# output cleaned samplesheets
 print(sampleAnnotation2)
 print(outputSheet)
