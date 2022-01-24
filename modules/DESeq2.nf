@@ -19,7 +19,7 @@ process DESeq2 {
 
     input:
         path count_matrix_path
-	    path sample_ann_path
+        path sample_ann_path
         val(prefix)
 
     output:
