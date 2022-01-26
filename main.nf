@@ -15,5 +15,5 @@ workflow {
 
     dummyCheckInput(samplesheet, gene_expression, genes_of_interest)
     DESeq2(gene_expression,samplesheet)
-    VolcanoPlot(IHW_Res,genes_of_interest)
+    VolcanoPlot(DESeq2.out.de_res,genes_of_interest)
 }
