@@ -1,7 +1,5 @@
 nextflow.enable.dsl=2
 
-println s.stripIndent()
-
 out_dir = file(params.resDir)
 mode = params.publish_dir_mode
 
