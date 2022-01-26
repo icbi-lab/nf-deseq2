@@ -12,7 +12,7 @@ library("argparser", quietly = TRUE)
 p <- arg_parser("Input to draw Volcano plots")
 
 # Add command line arguments
-p <- add_argument(p, "resIHW", help = "DESeq2 differential expression results as tsv file", type = "character")
+p <- add_argument(p, "de_res", help = "DESeq2 differential expression results as tsv file", type = "character")
 p <- add_argument(p, "genes_of_interest", help = "txt file containing an arbitrary number of genes to be plotted", type = "character")
 p <- add_argument(p, "--resDir", help = "Output result directory", default = "./results")
 p <- add_argument(p, "--prefix", help = "Prefix of result file", default = "test")
@@ -25,40 +25,28 @@ results_dir <- argv$resDir
 prefix <- argv$prefix
 
 # Reading the DESeq2 diff_res tsv file and genes of interest txt file
-resIHW <- read_tsv(argv$resIHW)
-genes_of_interest <- read_delim(argv$genes_of_interest) |> as.vector()
+de_res <- read_tsv(argv$de_res)
+genes_of_interest <- read.table(argv$genes_of_interest$gene_name) |> as.vector()
 
 
 # Make volcano plot using "EnhancedVolcano" package
-make_volcano <- function(dat, label_subset) {
+de_res <- de_res[!is.na(de_res$padj), ]
+de_res$label <- ifelse(de_res$gene_name %in% genes_of_interest, de_res$gene_name, NA)
 
-new_p_val <- dat[!dat$padj == 0, ]$padj[1]
+y_max <- -log10(min(de_res$padj, na.rm = T))
+x_min <- -ceiling(abs(min(de_res$log2FoldChange, na.rm = T)))
+x_max <- ceiling(max(de_res$log2FoldChange, na.rm = T))
 
-dat <- dat[!is.na(dat$padj),]
-dat[dat$padj == 0, ]$padj <- new_p_val
-
-l_sub <- dat[dat$gene_name %in% label_subset, ]
-l_sub <- l_sub[l_sub$padj < 0.05, ]$gene_name
-
-l_total <- dat$gene_name
-label <- ifelse(l_total %in% l_sub, l_total, NA)
-
-y_max <- -log10(min(dat$padj, na.rm = T))
-x_min <- -ceiling(abs(min(dat$log2FoldChange, na.rm = T)))
-x_max <- ceiling(max(dat$log2FoldChange, na.rm = T))
-
-p <- EnhancedVolcano(dat,
-                     lab = label,
+p <- EnhancedVolcano(de_res,
+                     lab = de_res$label,
                      x = 'log2FoldChange',
                      y = 'padj',
                      xlim = c(x_min, x_max),
                      ylim = c(0, y_max),
-                     title = "",
+                     title = prefix,
                      pCutoff = 0.05,
                      FCcutoff = 2,
                      drawConnectors = TRUE)
-return(p)
-}
 
 # save single plot as pdf
 save_A4_pdf <- function(plot){
@@ -70,5 +58,5 @@ dev.off()
 }
 
 
-make_volcano(resIHW, genes_of_interest) |> save_A4_pdf
+save_A4_pdf(p)
 
