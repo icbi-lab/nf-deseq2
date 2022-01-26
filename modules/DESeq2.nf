@@ -1,14 +1,5 @@
 nextflow.enable.dsl=2
 
-def s = """\
-        _________________________________________________
-        Nextflow DESeq2:
-
-        ▶ Input count data matrix: ${params.gene_expression}
-        ▶ Input sample annotation data: ${params.samplesheet}
-        ▶ result output directory: ${params.resDir}
-        _________________________________________________
-        """
 println s.stripIndent()
 
 out_dir = file(params.resDir)
@@ -21,7 +12,7 @@ process DESeq2 {
 
         input:
         path count_matrix_path
-	    path sample_ann_path
+	      path sample_ann_path
 
     output:
         path("*.tsv"), emit: de_res
