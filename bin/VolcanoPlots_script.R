@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Import library
+library("conflicted")
 library("dplyr")
 library("EnhancedVolcano")
 library("tibble")
