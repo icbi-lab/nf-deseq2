@@ -26,7 +26,7 @@ library(EnhancedVolcano)
 
 # Load parameters
 de_res <- read_tsv(arguments$de_res)
-goi <- read_lines(arguments$goi, skip = 1)
+goi <- read_lines(arguments$goi)
 pCutoff <- as.numeric(arguments$pCutoff)
 FCcutoff <- as.numeric(arguments$FCcutoff)
 prefix <- arguments$prefix
