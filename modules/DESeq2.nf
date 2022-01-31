@@ -1,16 +1,5 @@
 nextflow.enable.dsl=2
 
-def s = """\
-        _________________________________________________
-        Nextflow DESeq2:
-
-        ▶ Inpu count data matrix: ${params.gene_expression}
-        ▶ Input sample annotation data: ${params.samplesheet}
-        ▶ result output directory: ${params.resDir}
-        _________________________________________________
-        """
-println s.stripIndent()
-
 out_dir = file(params.resDir)
 mode = params.publish_dir_mode
 
