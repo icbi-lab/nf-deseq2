@@ -17,11 +17,13 @@ workflow {
     ch_ora_pathway_dbs = Channel.from(params.ora_pathway_dbs)
     prefix = params.prefix
     de_fdr_cutoff = params.fdr
+    pCutoff = params.pCutoff
+    FCcutoff = params.FCcutoff
 
     // start workflow
     dummyCheckInput(samplesheet, gene_expression, genes_of_interest)
     DESeq2(gene_expression, samplesheet, prefix)
-    VolcanoPlot(DESeq2.out.de_res,genes_of_interest)
+    VolcanoPlot(DESeq2.out.de_res,genes_of_interest,pCutoff,FCcutoff,prefix)
 
     if (!params.skip_ora) {
         CLUSTERPROFILER_ORA(DESeq2.out.de_res, ch_ora_pathway_dbs, prefix, de_fdr_cutoff)
