@@ -1,62 +1,80 @@
 #!/usr/bin/env Rscript
+'
+Usage:
+  VolcanoPlots_script.R --de_res=<de_res> --goi=<goi> --prefix=<prefix> [options]
 
-# Import library
-library("conflicted")
-library("dplyr")
-library("EnhancedVolcano")
-library("tibble")
-library("readr")
-library("argparser", quietly = TRUE)
+Mandatory arguments:
+  --de_res=<de_res>           TopTable from DESeq2 in TSV format
+  --goi=<goi>                 Genes of interest in txt format
+  --prefix=<prefix>           Prefix for output filenames
 
-# Create a parser
-p <- arg_parser("Input to draw Volcano plots")
+Optional arguments:
+  --pCutoff=<pCutoff>         Cut-off for statistical significance [default: 0.05]
+  --FCcutoff=<FCcutoff>       Cut-off for absolute log2 fold-change [default: 2]
+  --results_dir=<dir>         Output directory [default: ./]
+' -> doc
 
-# Add command line arguments
-p <- add_argument(p, "de_res", help = "DESeq2 differential expression results as tsv file", type = "character")
-p <- add_argument(p, "genes_of_interest", help = "txt file containing an arbitrary number of genes to be plotted", type = "character")
-p <- add_argument(p, "--resDir", help = "Output result directory", default = "./results")
-p <- add_argument(p, "--prefix", help = "Prefix of result file", default = "test")
+library(conflicted)
+library(docopt)
+arguments <- docopt(doc, version = "0.1")
+print(arguments)
 
-# Parse the command line arguments
-argv <- parse_args(p)
-
-
-results_dir <- argv$resDir
-prefix <- argv$prefix
-
-# Reading the DESeq2 diff_res tsv file and genes of interest txt file
-de_res <- read_tsv(argv$de_res)
-genes_of_interest <- read.table(argv$genes_of_interest$gene_name) |> as.vector()
+library(readr)
+library(dplyr)
+library(EnhancedVolcano)
 
 
-# Make volcano plot using "EnhancedVolcano" package
-de_res <- de_res[!is.na(de_res$padj), ]
-de_res$label <- ifelse(de_res$gene_name %in% genes_of_interest, de_res$gene_name, NA)
-
-y_max <- -log10(min(de_res$padj, na.rm = T))
-x_min <- -ceiling(abs(min(de_res$log2FoldChange, na.rm = T)))
-x_max <- ceiling(max(de_res$log2FoldChange, na.rm = T))
-
-p <- EnhancedVolcano(de_res,
-                     lab = de_res$label,
-                     x = 'log2FoldChange',
-                     y = 'padj',
-                     xlim = c(x_min, x_max),
-                     ylim = c(0, y_max),
-                     title = prefix,
-                     pCutoff = 0.05,
-                     FCcutoff = 2,
-                     drawConnectors = TRUE)
-
-# save single plot as pdf
-save_A4_pdf <- function(plot){
-
-pdf(file = file.path("./", paste0(prefix, "_Volcano_plot.pdf"),
-                     paper = "a4r", width = 297, height = 210))
-print(plot)
-dev.off()
-}
+# Load parameters
+de_res <- read_tsv(arguments$de_res)
+goi <- read_lines(arguments$goi, skip = 1)
+pCutoff <- as.numeric(arguments$pCutoff)
+FCcutoff <- as.numeric(arguments$FCcutoff)
+prefix <- arguments$prefix
+results_dir <- arguments$results_dir
 
 
-save_A4_pdf(p)
+# Make volcano plots using "EnhancedVolcano" package
+
+message(paste0("Drawing volcano plots..."))
+
+p <- EnhancedVolcano(
+  toptable = de_res,
+  lab = NA,
+  x = "log2FoldChange",
+  y = "pvalue",
+  pCutoff = pCutoff,
+  FCcutoff = FCcutoff,
+  title = paste0(prefix, "_volcano_plot"),
+  caption = paste0("fold change cutoff: ", pCutoff, ", p-value cutoff: ", FCcutoff)
+)
+
+ggsave(file.path(results_dir, paste0(prefix, "_volcano_plot.pdf")), plot = p, width = 297, height = 210, units = "mm")
+
+p <- EnhancedVolcano(
+  toptable = de_res,
+  lab = NA,
+  x = "log2FoldChange",
+  y = "padj",
+  pCutoff = pCutoff,
+  FCcutoff = FCcutoff,
+  title = paste0(prefix, "_volcano_plot"),
+  caption = paste0("fold change cutoff: ", pCutoff, ", adj.p-value cutoff:: ", FCcutoff)
+)
+
+ggsave(file.path(results_dir, paste0(prefix, "_volcano_padj.pdf")), plot = p, width = 297, height = 210, units = "mm")
+
+p <- EnhancedVolcano(
+  toptable = de_res,
+  lab = de_res$gene_name,
+  selectLab = goi,
+  x = "log2FoldChange",
+  y = "padj",
+  pCutoff = pCutoff,
+  FCcutoff = FCcutoff,
+  drawConnectors = TRUE,
+  title = paste0(prefix, "_volcano_plot_genes_of_interest"),
+  caption = paste0("fold change cutoff: ", pCutoff, ", adj.p-value cutoff:: ", FCcutoff)
+)
+
+ggsave(file.path(results_dir, paste0(prefix, "_volcano_padj_GoI.pdf")), plot = p, width = 297, height = 210, units = "mm")
 
