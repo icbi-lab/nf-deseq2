@@ -1,10 +1,9 @@
+#!/usr/bin/env nextflow
+
+nextflow.enable.dsl = 2
+
 #Get input arguments
 arg = commandArgs(trailingOnly=TRUE)
-
-#Test if there is a inputfile argument
-if (length(args)!=1) {
-  stop("You have to enter the full path to your source file as parameter!", call.=FALSE)
-}
 
 #Load package and set path
 library("topGO")
