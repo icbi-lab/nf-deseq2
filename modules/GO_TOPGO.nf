@@ -3,13 +3,16 @@
 nextflow.preview.dsl=2
 
 process goTopGo {
+
+  conda "conda-forge::r-base=4.1.2 bioconda::bioconductor-topgo bioconda::bioconductor-org.hs.eg.db conda-forge::r-ggplot2"
+
   input:
-    file DESeq2.tsv
+    path(DESeq2_in)
   output:
-    file topGO_GO_up.txt
-    file topGO_GO_dn.txt
+    path("topGO_GO-BP_ORA_weight01_fisher_up.txt")
+    path("topGO_GO-BP_ORA_weight01_fisher_dn.txt")
   script:
     """
-    ../bin/GOTOPGO.R DESeq2.tsv
+    GOTOPGO.R ${DESeq2_in}
     """
 }
