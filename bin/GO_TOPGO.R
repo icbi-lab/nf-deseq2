@@ -1,4 +1,4 @@
-#!/usr/bin/env R
+#!/usr/bin/env Rscript
 
 #Get input arguments
 arg = commandArgs(trailingOnly=TRUE)
