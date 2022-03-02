@@ -6,7 +6,7 @@ include { dummyCheckInput } from "./modules/dummy_check_input"
 include { DESeq2 } from "./modules/DESeq2"
 include { VolcanoPlot } from "./modules/VolcanoPlot"
 include { CLUSTERPROFILER_ORA } from "./modules/clusterprofiler_ora"
-include { goTopGo } from "./modules/GOTOPGO"
+include { goTopGo } from "./modules/GO_TOPGO"
 
 workflow {
     // Retrieve and validate parameters
@@ -25,7 +25,7 @@ workflow {
     dummyCheckInput(samplesheet, gene_expression, genes_of_interest)
     DESeq2(gene_expression, samplesheet, prefix)
     VolcanoPlot(DESeq2.out.de_res, genes_of_interest, pCutoff, FCcutoff,prefix)
-    goTopGo(DESeq2.tsv)
+    goTopGo(DESeq2.out.de_res)
 
     if (!params.skip_ora) {
         CLUSTERPROFILER_ORA(DESeq2.out.de_res, ch_ora_pathway_dbs, prefix, de_fdr_cutoff)
