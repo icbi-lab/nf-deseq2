@@ -81,17 +81,30 @@ upRes <- runTest(upGOdata, algorithm = algorithm, statistic = statistic)
 #Test dn
 dnRes <- runTest(dnGOdata, algorithm = algorithm, statistic = statistic)
 
+#### This does not work with the official TopGO package
+#### enrichment_barplot function was added in a privat fork of TopGO
+#### as far as I can see: https://github.com/ycl6/topGO-feat
+####
+#### DISABLED for now
+
 #Plot enrichment
+
 #Up-regulated genes
-png(paste0(outTitle, "_up.png"), width = 8, height = 6, units = "in", res = 300)
-enrichment_barplot(upGOdata, upRes, showTerms = 20, numChar = 50, orderBy = "Scores", 
-                   title = paste0("GO-", ontology," ORA of up-regulated genes"))
-invisible(dev.off())
+
+#png(paste0(outTitle, "_up.png"), width = 8, height = 6, units = "in", res = 300)
+#enrichment_barplot(upGOdata, upRes, showTerms = 20, numChar = 50, orderBy = "Scores", 
+#                   title = paste0("GO-", ontology," ORA of up-regulated genes"))
+#invisible(dev.off())
+
 #Down-regulated genes
-png(paste0(outTitle, "_dn.png"), width = 8, height = 6, units = "in", res = 300)
-enrichment_barplot(dnGOdata, dnRes, showTerms = 20, numChar = 50, orderBy = "Scores",
-                   title = paste0("GO-", ontology," ORA of down-regulated genes"))
-invisible(dev.off())
+
+#png(paste0(outTitle, "_dn.png"), width = 8, height = 6, units = "in", res = 300)
+#enrichment_barplot(dnGOdata, dnRes, showTerms = 20, numChar = 50, orderBy = "Scores",
+#                   title = paste0("GO-", ontology," ORA of down-regulated genes"))
+#invisible(dev.off())
+
+#### END DISABLED enrichment_balplots
+
 
 #Create result table
 #Build up result table
