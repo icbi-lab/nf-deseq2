@@ -15,20 +15,24 @@ library("ggplot2")
 
 #Load data from input file
 data <- data.table::fread(arg[1])
-data$GeneID <- substr(data$GeneID, 1, 18)
+
+# We have the following columns
+# gene_id gene_id baseMean        log2FoldChange  lfcSE   stat    pvalue  padj    weight  gene_name       genes_description
 
 #Define significance threshold
-up.idx <- which(data$padj < 0.05 & data$log2fc > 0) # FDR < 0.05 and logFC > 0
-dn.idx <- which(data$padj < 0.05 & data$log2fc < 0) # FDR < 0.05 and logFC < 0
+up.idx <- which(data$padj < 0.05 & data$log2FoldChange > 0) # FDR < 0.05 and logFC > 0
+dn.idx <- which(data$padj < 0.05 & data$log2FoldChange < 0) # FDR < 0.05 and logFC < 0
 
 #Define significant genes
-all.genes <- data$GeneSymbol
-up.genes <- data[up.idx,]$GeneSymbol
-dn.genes <- data[dn.idx,]$GeneSymbol
+all.genes <- data$gene_name
+up.genes <- data[up.idx,]$gene_name
+dn.genes <- data[dn.idx,]$gene_name
+
+
 ##Alternative if you have only Ensembl gene ID
-#all.genes <- data$GeneID
-#up.genes <- data[up.idx,]$GeneID
-#dn.genes <- data[dn.idx,]$GeneID
+#all.genes <- data$gene_id
+#up.genes <- data[up.idx,]$gene_id
+#dn.genes <- data[dn.idx,]$gene_id
 
 #Decide the sub-ontology to test
 ontology <- "BP"  #(Biological Process)
