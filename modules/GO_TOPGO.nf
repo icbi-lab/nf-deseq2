@@ -13,6 +13,6 @@ process goTopGo {
     path("topGO_GO-BP_ORA_weight01_fisher_dn.txt")
   script:
     """
-    GOTOPGO.R ${DESeq2_in}
+    GO_TOPGO.R ${DESeq2_in}
     """
 }
