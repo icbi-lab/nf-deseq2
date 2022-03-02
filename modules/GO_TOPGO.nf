@@ -4,7 +4,7 @@ nextflow.preview.dsl=2
 
 process goTopGo {
 
-  conda "conda-forge::r-base=4.1.2 bioconda::bioconductor-topgo bioconda::bioconductor-org.hs.eg.db conda-forge::r-ggplot2"
+  conda "conda-forge::r-base=4.1.2 bioconda::bioconductor-topgo bioconda::bioconductor-org.hs.eg.db conda-forge::r-ggplot2 conda-forge::r-data.table"
 
   input:
     path(DESeq2_in)
