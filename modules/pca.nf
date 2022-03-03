@@ -4,7 +4,7 @@ out_dir = file(params.resDir)
 mode = params.publish_dir_mode
 
 process PCA {
-    conda "conda-forge::python=3.8 conda-forge::pandas=1.2.0 conda-forge::sklearn=0.0 conda-forge::plotly=5.5.0 conda-forge::numpy=1.19.5"
+    conda "conda-forge::python=3.8 conda-forge::pandas=1.2.0 conda-forge::scikit-learn=1.0.2 conda-forge::plotly=5.5.0 conda-forge::numpy=1.19.5"
 
     input:
         path(count_matrix_path)
