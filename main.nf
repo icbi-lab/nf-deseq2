@@ -23,13 +23,15 @@ workflow {
     pCutoff = params.pCutoff
     FCcutoff = params.FCcutoff
     colour_colum_pca = params.colour_colum_pca
+    annotation_columns_counts = params.annotation_columns_counts
+    annotation_columns_samplesheet = params.annotation_columns_samplesheet
 
     // start workflow
     dummyCheckInput(samplesheet, gene_expression, genes_of_interest)
     DESeq2(gene_expression, samplesheet, prefix)
     VolcanoPlot(DESeq2.out.de_res, genes_of_interest, pCutoff, FCcutoff,prefix)
     goTopGo(DESeq2.out.de_res)
-    PCA(gene_expression, samplesheet, colour_colum_pca, "None", "None", prefix)
+    PCA(gene_expression, samplesheet, colour_colum_pca, annotation_columns_counts, annotation_columns_samplesheet, prefix)
 
     if (!params.skip_ora) {
         CLUSTERPROFILER_ORA(DESeq2.out.de_res, ch_ora_pathway_dbs, prefix, de_fdr_cutoff)
