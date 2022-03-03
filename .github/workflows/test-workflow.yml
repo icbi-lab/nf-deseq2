@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         # Nextflow versions: check pipeline minimum and latest edge version
-        nxf_ver: ["NXF_VER=21.04.0", "NXF_EDGE=1"]
+        nxf_ver: ["NXF_VER=21.04.0"]
         python_ver: ["3.8"]
         tag: ["deseq2"]
     steps:
@@ -50,6 +50,16 @@ jobs:
       - name: Run pytest-workflow
         # only use one thread for pytest-workflow to avoid race condition on conda cache.
         run: TMPDIR=~ pytest --tag ${{ matrix.tag }} --symlink --kwdof
+
+      - name: Output log on failure
+        if: failure()
+        run: |
+          echo "======> log.out <======="
+          cat /home/runner/pytest_workflow_*/*/log.out
+          echo
+          echo
+          echo "======> log.err <======="
+          cat /home/runner/pytest_workflow_*/*/log.err
 
       - name: Upload logs on failure
         if: failure()
