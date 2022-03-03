@@ -35,7 +35,7 @@ results_dir <- arguments$results_dir
 
 # Make volcano plots using "EnhancedVolcano" package
 
-message(paste0("Drawing volcano plots..."))
+message("Drawing volcano plots...")
 
 p <- EnhancedVolcano(
   toptable = de_res,
