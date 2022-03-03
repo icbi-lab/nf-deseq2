@@ -4,4 +4,9 @@
     - deseq2
   files:
     - path: "results/dummy_check_input/test.txt"
-      contains: ["gene_expression.subset.tsv", "samplesheet.csv", "CAMSAP1"]
+      contains:
+        [
+          "salmon.merged.gene_counts.subset.tsv",
+          "rnaseq_samplesheet_nfcore-3.1.csv",
+          "CAMSAP1",
+        ]
