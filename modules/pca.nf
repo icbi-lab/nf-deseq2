@@ -15,11 +15,11 @@ process PCA {
         val(prefix)
 
     output:
-        path("${prefix}PCA_plot.png") emit: pca_plot
-        
-	script:
-	"""
+        path("${prefix}PCA_plot.png"), emit: pca_plot
+
+    script:
+    """
     PCA.py -I ${count_matrix_path} -IS ${sample_ann_path} -0 ${prefix}PCA_plot.png  -CC ${colour_colum_pca} -AC ${annotation_columns_counts} -A ${annotation_columns_samplesheet}
-	"""
+    """
 }
 
