@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python3
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -38,10 +38,10 @@ figureType = args.figureType
 data = pd.read_csv(data_path,sep=sep,index_col=0)
 data = data.drop(columns=annotations_counts)
 data = data.transpose()
-samplesheet = pd.read_csv(sample_sheet,sep=',',index_col=0)
+samplesheet = pd.read_csv(sample_sheet,sep=',')
 print(samplesheet)
 print(data)
-data = pd.merge(data,samplesheet,left_index=True,right_index=True,how='left')
+data = pd.merge(data,samplesheet,left_index=True,right_on='sample',how='left')
 data = data.drop_duplicates()
 print(data)
 print(annotations)
@@ -58,12 +58,14 @@ sampleList = [sample]
 NotFeature = targetList+annotationsList+sampleList
 features = [i for i in cols if i not in NotFeature]
 targets = targetList
-print(targets)
+print(NotFeature)
 
+print(colc)
 x = data.loc[:, features].values
+print(x)
 x = np.where(np.isnan(x),0,x)
 y = data.loc[:,targets].values
-print(y)
+
 x = StandardScaler().fit_transform(x)
 
 if int(dim) == 2:
