@@ -84,7 +84,7 @@ if int(dim) == 2:
             print(colorList)
             fig = px.scatter(principalComponents, x = 0 , y = 1, color = colorList, \
                 labels={'0': 'PC 1', '1': 'PC 2'}, color_discrete_sequence=getattr(px.colors.qualitative, color))
-            fig.write_image(f'{output_path}{name}_{i}.{figureType}')
+            fig.write_image(f'{output_path}')
     else:
         finalDf = pd.concat([principalDf, data[targetList+[sample]]], axis = 1)
         for i in targetList:
@@ -92,7 +92,7 @@ if int(dim) == 2:
             colorList = [str(i) for i in colorList]
             fig = px.scatter(principalComponents, x = 0 , y = 1, color = colorList,\
                 labels={'0': 'PC 1', '1': 'PC 2'},text=finalDf[sample], color_discrete_sequence=getattr(px.colors.qualitative, color))
-            fig.write_image(f'{output_path}{name}_{i}.{figureType}')
+            fig.write_image(f'{output_path}')
 
 elif int(dim) == 3:
     pca = PCA(n_components=3)
@@ -105,7 +105,7 @@ elif int(dim) == 3:
             colorList = [str(i) for i in colorList]
             fig = px.scatter_3d(principalComponents, x = 0 , y = 1, z= 2, color = colorList,\
                 labels={'0': 'PC 1', '1': 'PC 2', '2': 'PC 3'}, color_discrete_sequence=getattr(px.colors.qualitative, color))
-            fig.write_image(f'{output_path}{name}_{i}.{figureType}')
+            fig.write_image(f'{output_path}')
 
     else:
         finalDf = pd.concat([principalDf, data[targetList+[sample]]], axis = 1)
@@ -114,7 +114,7 @@ elif int(dim) == 3:
             colorList = [str(i) for i in colorList]
             fig = px.scatter_3d(principalComponents, x = 0 , y = 1, z= 2, color = colorList,\
                 labels={'0': 'PC 1', '1': 'PC 2', '2': 'PC 3'},text=finalDf[sample], color_discrete_sequence=getattr(px.colors.qualitative, color))
-            fig.write_image(f'{output_path}{name}_{i}.{figureType}')
+            fig.write_image(f'{output_path}')
 
 else:
     print(f'Error possible values vor -D, --dimensions are 2 and 3\nyou have selected {dim}')
