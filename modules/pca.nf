@@ -19,7 +19,7 @@ process PCA {
 
     script:
     """
-    PCA.py -I ${count_matrix_path} -IS ${sample_ann_path} -0 ${prefix}PCA_plot.png  -CC ${colour_colum_pca} -AC ${annotation_columns_counts} -A ${annotation_columns_samplesheet}
+    PCA.py -I ${count_matrix_path} -IS ${sample_ann_path} -O ${prefix}PCA_plot.png  -CC ${colour_colum_pca} -AC ${annotation_columns_counts} -A ${annotation_columns_samplesheet}
     """
 }
 
