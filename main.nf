@@ -8,6 +8,7 @@ include { VolcanoPlot } from "./modules/VolcanoPlot"
 include { CLUSTERPROFILER_ORA } from "./modules/clusterprofiler_ora"
 include { goTopGo } from "./modules/GO_TOPGO"
 include { PCA } from "./modules/pca"
+include { BioQC } from "./modules/BioQC"
 
 
 workflow {
@@ -32,6 +33,7 @@ workflow {
     VolcanoPlot(DESeq2.out.de_res, genes_of_interest, pCutoff, FCcutoff,prefix)
     goTopGo(DESeq2.out.de_res)
     PCA(gene_expression, samplesheet, colour_colum_pca, annotation_columns_counts, annotation_columns_samplesheet, prefix)
+    BioQC(gene_expression, samplesheet)
 
     if (!params.skip_ora) {
         CLUSTERPROFILER_ORA(DESeq2.out.de_res, ch_ora_pathway_dbs, prefix, de_fdr_cutoff)
