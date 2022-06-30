@@ -23,7 +23,6 @@ library(readr)
 library(dplyr)
 library(EnhancedVolcano)
 
-
 # Load parameters
 de_res <- read_tsv(arguments$de_res)
 goi <- read_lines(arguments$goi)
@@ -32,9 +31,7 @@ FCcutoff <- as.numeric(arguments$FCcutoff)
 prefix <- arguments$prefix
 results_dir <- arguments$results_dir
 
-
 # Make volcano plots using "EnhancedVolcano" package
-
 message("Drawing volcano plots...")
 
 p <- EnhancedVolcano(
@@ -45,7 +42,7 @@ p <- EnhancedVolcano(
   pCutoff = pCutoff,
   FCcutoff = FCcutoff,
   title = paste0(prefix, "_volcano_plot"),
-  caption = paste0("fold change cutoff: ", pCutoff, ", p-value cutoff: ", FCcutoff)
+  caption = paste0("fold change cutoff: ", FCcutoff, "; p-value cutoff: ", pCutoff)
 )
 
 ggsave(file.path(results_dir, paste0(prefix, "_volcano_plot.pdf")), plot = p, width = 297, height = 210, units = "mm")
@@ -58,7 +55,7 @@ p <- EnhancedVolcano(
   pCutoff = pCutoff,
   FCcutoff = FCcutoff,
   title = paste0(prefix, "_volcano_plot"),
-  caption = paste0("fold change cutoff: ", pCutoff, ", adj.p-value cutoff:: ", FCcutoff)
+  caption = paste0("fold change cutoff: ", FCcutoff, "; adj.p-value cutoff: ", pCutoff)
 )
 
 ggsave(file.path(results_dir, paste0(prefix, "_volcano_padj.pdf")), plot = p, width = 297, height = 210, units = "mm")
@@ -73,8 +70,7 @@ p <- EnhancedVolcano(
   FCcutoff = FCcutoff,
   drawConnectors = TRUE,
   title = paste0(prefix, "_volcano_plot_genes_of_interest"),
-  caption = paste0("fold change cutoff: ", pCutoff, ", adj.p-value cutoff:: ", FCcutoff)
+  caption = paste0("fold change cutoff: ", FCcutoff, "; adj.p-value cutoff: ", pCutoff)
 )
 
 ggsave(file.path(results_dir, paste0(prefix, "_volcano_padj_GoI.pdf")), plot = p, width = 297, height = 210, units = "mm")
-
