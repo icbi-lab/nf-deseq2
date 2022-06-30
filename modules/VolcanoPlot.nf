@@ -10,16 +10,13 @@ process VolcanoPlot {
 
     input:
         path(de_res)
-	      path(goi)
-	      val(pCutoff)
-	      val(FCcutoff)
-	      val(prefix)
+	    path(goi)
+	    val(pCutoff)
+	    val(FCcutoff)
+	    val(prefix)
 
     output:
-        path("${prefix}_volcano_plot.pdf"), emit: volcano
-        path("${prefix}_volcano_padj.pdf"), emit: volcano_padj
-        path("${prefix}_volcano_padj_GoI.pdf"), emit: volcano_GoI
-        path("*.pdf"), emit: plots, optional: true
+        path("${prefix}*.pdf"), emit: volcano_plots, optional: true
 
 	script:
 	"""
